@@ -2,17 +2,27 @@ namespace GameEngine.Tests
 {
     using System;
     using Xunit;
+    using Xunit.Abstractions;
 
     public class PlayerCharacterShould
     {
+        private readonly ITestOutputHelper _output;
+
+        public PlayerCharacterShould(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         #region Boolean Asserts
 
         [Fact]
         public void BeInexperiencedWhenNew()
         {
+            _output.WriteLine("Player boolean test started");
             PlayerCharacter sut = new PlayerCharacter();
 
             Assert.True(sut.IsNoob);
+            _output.WriteLine("Player boolean test finished");
         }
 
         #endregion
@@ -192,12 +202,12 @@ namespace GameEngine.Tests
                 handler => sut.PlayerSlept -= handler,
                 () => sut.Sleep());
         }
-        
+
         [Fact]
         public void RaisePropertyChangedEvent()
         {
             PlayerCharacter sut = new();
-    
+
             Assert.PropertyChanged(sut, "Health", () => sut.TakeDamage(10));
         }
 
