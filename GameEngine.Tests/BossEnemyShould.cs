@@ -7,6 +7,7 @@
         #region Floating Point Values Asserts
 
         [Fact]
+        [Trait("Category", "Boss")]
         public void HaveCorrectPower()
         {
             BossEnemy sut = new BossEnemy();

@@ -3,6 +3,7 @@
     using System;
     using Xunit;
 
+    [Trait("Category", "Enemy")]
     public class EnemyFactoryShould
     {
         #region Object Types Asserts
@@ -17,7 +18,7 @@
             Assert.IsType<NormalEnemy>(enemy);
         }
 
-        [Fact]
+        [Fact(Skip = "Don't need to run this")]
         public void CreateNormalEnemyByDefault_NotTypeExample()
         {
             EnemyFactory sut = new();
@@ -33,7 +34,7 @@
             EnemyFactory sut = new();
 
             Enemy enemy = sut.Create("Zombie King", true);
-            
+
             Assert.IsType<BossEnemy>(enemy);
         }
 
@@ -46,7 +47,7 @@
 
             // Assert and get cast result
             BossEnemy boss = Assert.IsType<BossEnemy>(enemy);
-            
+
             // Additional asserts on typed object
             Assert.Equal("Zombie King", boss.Name);
         }
@@ -58,10 +59,10 @@
 
             Enemy enemy = sut.Create("Zombie King", true);
 
-            Assert.IsType<BossEnemy>(enemy);        // Explicit type
-            Assert.IsAssignableFrom<Enemy>(enemy);  // Derived type
+            Assert.IsType<BossEnemy>(enemy); // Explicit type
+            Assert.IsAssignableFrom<Enemy>(enemy); // Derived type
         }
-        
+
         #endregion
 
         #region Object Instances Asserts
@@ -89,14 +90,14 @@
             Assert.Throws<ArgumentNullException>(() => sut.Create(null));
             Assert.Throws<ArgumentNullException>("name", () => sut.Create(null));
         }
-        
+
         [Fact]
         public void OnlyAllowKingOrQueenBossEnemies()
         {
             EnemyFactory sut = new();
 
             EnemyCreationException ex = Assert.Throws<EnemyCreationException>(() => sut.Create("Zombie", true));
-            
+
             Assert.Equal("Zombie", ex.RequestedEnemyName);
         }
 
