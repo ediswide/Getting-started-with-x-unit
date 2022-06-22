@@ -4,13 +4,18 @@ namespace GameEngine.Tests
     using Xunit;
     using Xunit.Abstractions;
 
-    public class PlayerCharacterShould
+    public class PlayerCharacterShould : IDisposable
     {
         private readonly ITestOutputHelper _output;
+
+        private readonly PlayerCharacter _sut;
 
         public PlayerCharacterShould(ITestOutputHelper output)
         {
             _output = output;
+            _output.WriteLine("Creating new PlayerCharacter");
+
+            _sut = new();
         }
 
         #region Boolean Asserts
@@ -19,9 +24,8 @@ namespace GameEngine.Tests
         public void BeInexperiencedWhenNew()
         {
             _output.WriteLine("Player boolean test started");
-            PlayerCharacter sut = new PlayerCharacter();
 
-            Assert.True(sut.IsNoob);
+            Assert.True(_sut.IsNoob);
             _output.WriteLine("Player boolean test finished");
         }
 
@@ -32,34 +36,28 @@ namespace GameEngine.Tests
         [Fact]
         public void CalculateFullName()
         {
-            PlayerCharacter sut = new PlayerCharacter();
+            _sut.FirstName = "Sarah";
+            _sut.LastName = "Smith";
 
-            sut.FirstName = "Sarah";
-            sut.LastName = "Smith";
-
-            Assert.Equal("Sarah Smith", sut.FullName);
+            Assert.Equal("Sarah Smith", _sut.FullName);
         }
 
         [Fact]
         public void HaveFullNameStartingWithFirstName()
         {
-            PlayerCharacter sut = new PlayerCharacter();
+            _sut.FirstName = "Sarah";
+            _sut.LastName = "Smith";
 
-            sut.FirstName = "Sarah";
-            sut.LastName = "Smith";
-
-            Assert.StartsWith("Sarah", sut.FullName);
+            Assert.StartsWith("Sarah", _sut.FullName);
         }
 
         [Fact]
         public void HaveFullNameEndingWithLastName()
         {
-            PlayerCharacter sut = new PlayerCharacter();
+            _sut.FirstName = "Sarah";
+            _sut.LastName = "Smith";
 
-            sut.FirstName = "Sarah";
-            sut.LastName = "Smith";
-
-            Assert.EndsWith("Smith", sut.FullName);
+            Assert.EndsWith("Smith", _sut.FullName);
         }
 
         [Fact]
@@ -76,23 +74,19 @@ namespace GameEngine.Tests
         [Fact]
         public void CalculateFullName_SubstringAssertExample()
         {
-            PlayerCharacter sut = new PlayerCharacter();
+            _sut.FirstName = "Sarah";
+            _sut.LastName = "Smith";
 
-            sut.FirstName = "Sarah";
-            sut.LastName = "Smith";
-
-            Assert.Contains("ah Sm", sut.FullName);
+            Assert.Contains("ah Sm", _sut.FullName);
         }
 
         [Fact]
         public void CalculateFullNameWithTitleCase()
         {
-            PlayerCharacter sut = new PlayerCharacter();
+            _sut.FirstName = "Sarah";
+            _sut.LastName = "Smith";
 
-            sut.FirstName = "Sarah";
-            sut.LastName = "Smith";
-
-            Assert.Matches("[A-Z]{1}[a-z]+ [A-Z]{1}[a-z]+", sut.FullName);
+            Assert.Matches("[A-Z]{1}[a-z]+ [A-Z]{1}[a-z]+", _sut.FullName);
         }
 
         #endregion
@@ -102,27 +96,21 @@ namespace GameEngine.Tests
         [Fact]
         public void StartWithDefaultHealth()
         {
-            PlayerCharacter sut = new PlayerCharacter();
-
-            Assert.Equal(100, sut.Health);
+            Assert.Equal(100, _sut.Health);
         }
 
         [Fact]
         public void StartWithDefaultHealth_NotEqualExample()
         {
-            PlayerCharacter sut = new PlayerCharacter();
-
-            Assert.NotEqual(0, sut.Health);
+            Assert.NotEqual(0, _sut.Health);
         }
 
         [Fact]
         public void IncreaseHealthAfterSleeping()
         {
-            PlayerCharacter sut = new PlayerCharacter();
+            _sut.Sleep();
 
-            sut.Sleep();
-
-            Assert.InRange(sut.Health, 101, 200);
+            Assert.InRange(_sut.Health, 101, 200);
         }
 
         #endregion
@@ -144,17 +132,13 @@ namespace GameEngine.Tests
         [Fact]
         public void HaveALongBow()
         {
-            PlayerCharacter sut = new();
-
-            Assert.Contains("Long Bow", sut.Weapons);
+            Assert.Contains("Long Bow", _sut.Weapons);
         }
 
         [Fact]
         public void NotHaveAStaffOfWonder()
         {
-            PlayerCharacter sut = new();
-
-            Assert.DoesNotContain("Staff of Wonder", sut.Weapons);
+            Assert.DoesNotContain("Staff of Wonder", _sut.Weapons);
         }
 
         [Fact]
@@ -168,8 +152,6 @@ namespace GameEngine.Tests
         [Fact]
         public void HaveAllExpectedWeapons()
         {
-            PlayerCharacter sut = new();
-
             var expectedWeapons = new[]
             {
                 "Long Bow",
@@ -177,15 +159,13 @@ namespace GameEngine.Tests
                 "Short Sword",
             };
 
-            Assert.Equal(expectedWeapons, sut.Weapons);
+            Assert.Equal(expectedWeapons, _sut.Weapons);
         }
 
         [Fact]
         public void HaveNoEmptyDefaultWeapons()
         {
-            PlayerCharacter sut = new();
-
-            Assert.All(sut.Weapons, weapon => Assert.False(string.IsNullOrWhiteSpace(weapon)));
+            Assert.All(_sut.Weapons, weapon => Assert.False(string.IsNullOrWhiteSpace(weapon)));
         }
 
         #endregion
@@ -195,22 +175,23 @@ namespace GameEngine.Tests
         [Fact]
         public void RaiseSleptEvent()
         {
-            PlayerCharacter sut = new();
-
             Assert.Raises<EventArgs>(
-                handler => sut.PlayerSlept += handler,
-                handler => sut.PlayerSlept -= handler,
-                () => sut.Sleep());
+                handler => _sut.PlayerSlept += handler,
+                handler => _sut.PlayerSlept -= handler,
+                () => _sut.Sleep());
         }
 
         [Fact]
         public void RaisePropertyChangedEvent()
         {
-            PlayerCharacter sut = new();
-
-            Assert.PropertyChanged(sut, "Health", () => sut.TakeDamage(10));
+            Assert.PropertyChanged(_sut, "Health", () => _sut.TakeDamage(10));
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            _output.WriteLine($"Disposing PlayerCharacter {_sut.FullName}");
+        }
     }
 }
