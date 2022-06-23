@@ -191,39 +191,16 @@ namespace GameEngine.Tests
 
         #region Data Driven Tests
 
-        [Fact]
-        public void TakeZeroDamage()
+        [Theory]
+        [InlineData(0, 100)]
+        [InlineData(1, 99)]
+        [InlineData(50, 50)]
+        [InlineData(101, 1)]
+        public void TakeDamage(int damage, int expectedHealth)
         {
-            _sut.TakeDamage(0);
+            _sut.TakeDamage(damage);
 
-            Assert.Equal(100, _sut.Health);
-        }
-
-        [Fact]
-        [Trait("Category (to refactor)", "Data Driven Tests")]
-        public void TakeSmallDamage()
-        {
-            _sut.TakeDamage(1);
-
-            Assert.Equal(99, _sut.Health);
-        }
-
-        [Fact]
-        [Trait("Category (to refactor)", "Data Driven Tests")]
-        public void TakeMediumDamage()
-        {
-            _sut.TakeDamage(50);
-
-            Assert.Equal(50, _sut.Health);
-        }
-
-        [Fact]
-        [Trait("Category (to refactor)", "Data Driven Tests")]
-        public void HaveMinimumHealth()
-        {
-            _sut.TakeDamage(101);
-
-            Assert.Equal(1, _sut.Health);
+            Assert.Equal(expectedHealth, _sut.Health);
         }
 
         #endregion
