@@ -189,6 +189,45 @@ namespace GameEngine.Tests
 
         #endregion
 
+        #region Data Driven Tests
+
+        [Fact]
+        public void TakeZeroDamage()
+        {
+            _sut.TakeDamage(0);
+
+            Assert.Equal(100, _sut.Health);
+        }
+
+        [Fact]
+        [Trait("Category (to refactor)", "Data Driven Tests")]
+        public void TakeSmallDamage()
+        {
+            _sut.TakeDamage(1);
+
+            Assert.Equal(99, _sut.Health);
+        }
+
+        [Fact]
+        [Trait("Category (to refactor)", "Data Driven Tests")]
+        public void TakeMediumDamage()
+        {
+            _sut.TakeDamage(50);
+
+            Assert.Equal(50, _sut.Health);
+        }
+
+        [Fact]
+        [Trait("Category (to refactor)", "Data Driven Tests")]
+        public void HaveMinimumHealth()
+        {
+            _sut.TakeDamage(101);
+
+            Assert.Equal(1, _sut.Health);
+        }
+
+        #endregion
+
         public void Dispose()
         {
             _output.WriteLine($"Disposing PlayerCharacter {_sut.FullName}");
